@@ -10,56 +10,66 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-#gmail log in
-email_sender = os.getenv('email_sender')
-email_password = os.getenv('email_password')
+def send_email(email_login, password_login, email_to, email_cc, email_cci, email_subject, email_body, email_attach_file) :
+    msg = MIMEMultipart()
+    msg['From'] = email_login
+    msg['To'] = email_to
+    msg['Cc'] = email_cc
+    msg['Cci'] = email_cci
+    msg['Subject'] = email_subject
+    
+    # # Add body to email
+    msg.attach(MIMEText(email_body, "plain"))
 
-# mail
-email_receiver = "here"
-email_cc = "here"
-subject = "Test - Python script"
-body = """
-    It's a test    
-"""
-msg = MIMEMultipart()
-msg['From'] = email_sender
-msg['To'] = email_receiver
-msg['Cc'] = email_cc
-msg['Subject'] = subject
+    # Open PDF file in binary mode
+    with open(email_attach_file, "r") as attachment:
+        # Add file as application/octet-stream
+        # Email client can usually download this automatically as attachment
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(attachment.read())
 
-# Add body to email
-msg.attach(MIMEText(body, "plain"))
+    # Encode file in ASCII characters to send by email    
+    encoders.encode_base64(part)
 
-filename = 'path_file'  # In same directory as script
+    # Add header as key/value pair to attachment part
+    part.add_header(
+        "Content-Disposition",
+        f"attachment; filename= {email_attach_file}",
+    )
 
-# Open PDF file in binary mode
-with open(filename, "r") as attachment:
-    # Add file as application/octet-stream
-    # Email client can usually download this automatically as attachment
-    part = MIMEBase("application", "octet-stream")
-    part.set_payload(attachment.read())
+    # Add attachment to message and convert message to string
+    msg.attach(part)
+    text = msg.as_string()
 
-# Encode file in ASCII characters to send by email    
-encoders.encode_base64(part)
+    # Add SSL (layer of security)
+    context = ssl.create_default_context()
 
-# Add header as key/value pair to attachment part
-part.add_header(
-    "Content-Disposition",
-    f"attachment; filename= {filename}",
-)
+    try :
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+            smtp.login(email_login, password_login)
+            smtp.send_message(msg)
+        print("✅ Email sent successfully !")
+    except smtplib.SMTPException :
+        print("❌ Failed to send email")
 
-# Add attachment to message and convert message to string
-msg.attach(part)
-text = msg.as_string()
+print("\ne̳m̳a̳i̳l̳ s̳e̳n̳d̳e̳r̳\n")
 
-# Add SSL (layer of security)
-context = ssl.create_default_context()
 
-try :
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-        smtp.login(email_sender, email_password)
-        smtp.send_message(msg)
-    print("Email sent successfully !")
-except smtplib.SMTPException :
-    print("Failed to send email")
+# Ask for login informations
+print("Login :")
+email_login = input("Enter your email address : ")
+password_login = input("Enter your app password : ")
+print("Thank you, your information has temporary been save until the end of the process !\n")
+
+# ask for email campaign details
+print("Details : ")
+email_to = input("Send to : ")
+email_cc = input("Cc : ")
+email_cci = input("Cci : ")
+email_subject = input("Subject : ")
+email_body = input("Write your message : ")
+email_attach_file = input("Paste the path file you want to attach : ")
+
+#proceed to send the email
+send_email(email_login, password_login, email_to, email_cc, email_cci, email_subject, email_body, email_attach_file)    
 
