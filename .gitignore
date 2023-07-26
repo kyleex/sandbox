@@ -224,3 +224,4 @@ pyrightconfig.json
 .history
 .ionide
 .vscode/launch.json
+.vscode/settings.json
