@@ -225,3 +225,5 @@ pyrightconfig.json
 .ionide
 .vscode/launch.json
 .vscode/settings.json
+sandbox.code-workspace
+.gitignore
