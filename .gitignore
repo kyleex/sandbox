@@ -227,3 +227,4 @@ pyrightconfig.json
 .vscode/settings.json
 sandbox.code-workspace
 .gitignore
+read_googlesheet/secure/gc_service_account_credentials.json
