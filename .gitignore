@@ -229,3 +229,4 @@ sandbox.code-workspace
 .gitignore
 read_googlesheet/secure/gc_service_account_credentials.json
 create_gforms/secure/gc_service_account_credentials.json
+create_gdrive_folder/secure/gc_service_account_credentials.json
